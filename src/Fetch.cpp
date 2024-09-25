@@ -135,6 +135,30 @@ Response receiveResponse(WiFiClientSecure& client) {
     return response;
 }
 
+Response receiveSSEResponse(WiFiClient& client) {
+    // Getting response headers.
+    Response response;
+    
+    // Getting response body.
+    while(client.available()) {
+        response.body += client.readStringUntil('\n');
+    }
+
+    return response;
+}
+
+Response receiveSSEResponse(WiFiClientSecure& client) {
+    // Getting response headers.
+    Response response;
+    
+    // Getting response body.
+    while(client.available()) {
+        response.body += client.readStringUntil('\n');
+    }
+
+    return response;
+}
+
 WiFiClient makeHTTPRequest(Url& url, RequestOptions& options) {
     WiFiClient client;
     // Retry every 15 seconds.
@@ -256,6 +280,21 @@ void FetchClient::loop(bool nostop) {
         if (!nostop){
             _httpsClient.stop();
         }
+
+        _OnResponseCallback(response);
+    }
+}
+
+void FetchClient::loopsse() {
+    if(_protocol == HTTP && _httpClient.available()) {
+        DEBUG_FETCH("[Info] Receiving SSE response.");
+        Response response = receiveSSEResponse(_httpClient);
+
+        _OnResponseCallback(response);
+    }
+    else if(_protocol == HTTPS && _httpsClient.available()) {
+        DEBUG_FETCH("[Info] Receiving SSE response.");
+        Response response = receiveSSEResponse(_httpsClient);
 
         _OnResponseCallback(response);
     }
