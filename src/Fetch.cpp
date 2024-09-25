@@ -291,15 +291,21 @@ bool FetchClient::loopsse() {
         Response response = _sseFirstRespond ? receiveResponse(_httpClient) : receiveSSEResponse(_httpClient);
         _sseFirstRespond = false;
         _OnResponseCallback(response);
-        return _httpClient.connected();
+        
     }
     else if(_protocol == HTTPS && _httpsClient.available()) {
         DEBUG_FETCH("[Info] Receiving SSE response.");
         Response response = _sseFirstRespond ? receiveResponse(_httpsClient) : receiveSSEResponse(_httpsClient);
         _sseFirstRespond = false;
         _OnResponseCallback(response);
+        
+    }
+    if(_protocol == HTTP){
+        return _httpClient.connected();
+    }else if(_protocol == HTTPS){
         return _httpsClient.connected();
     }
+    return false;
 }
 
 ResponseHeaders::ResponseHeaders(): _text("") {}
