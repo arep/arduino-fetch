@@ -236,13 +236,15 @@ _protocol(HTTP), _httpClient(client), _httpsClient(), _OnResponseCallback(onResp
 FetchClient::FetchClient(WiFiClientSecure client, OnResponseCallback onResponseCallback) :
 _protocol(HTTPS), _httpClient(), _httpsClient(client), _OnResponseCallback(onResponseCallback) {}
 
-void FetchClient::loop() {
+void FetchClient::loop(bool nostop) {
     if(_protocol == HTTP && _httpClient.available()) {
         DEBUG_FETCH("[Info] Receiving response.");
         Response response = receiveResponse(_httpClient);
 
         // Stopping the client.
-        _httpClient.stop();
+        if (!nostop){
+            _httpClient.stop();
+        }
 
         _OnResponseCallback(response);
     }
@@ -251,7 +253,9 @@ void FetchClient::loop() {
         Response response = receiveResponse(_httpsClient);
 
         // Stopping the client.
-        _httpsClient.stop();
+        if (!nostop){
+            _httpsClient.stop();
+        }
 
         _OnResponseCallback(response);
     }
