@@ -285,18 +285,20 @@ void FetchClient::loop(bool nostop) {
     }
 }
 
-void FetchClient::loopsse() {
+bool FetchClient::loopsse() {
     if(_protocol == HTTP && _httpClient.available()) {
         DEBUG_FETCH("[Info] Receiving SSE response.");
         Response response = _sseFirstRespond ? receiveResponse(_httpClient) : receiveSSEResponse(_httpClient);
         _sseFirstRespond = false;
         _OnResponseCallback(response);
+        return _httpClient.connected();
     }
     else if(_protocol == HTTPS && _httpsClient.available()) {
         DEBUG_FETCH("[Info] Receiving SSE response.");
         Response response = _sseFirstRespond ? receiveResponse(_httpsClient) : receiveSSEResponse(_httpsClient);
         _sseFirstRespond = false;
         _OnResponseCallback(response);
+        return _httpsClient.connected();
     }
 }
 
