@@ -94,7 +94,7 @@ class FetchClient {
         FetchClient();
         FetchClient(WiFiClient client, OnResponseCallback callback);
         FetchClient(WiFiClientSecure client, OnResponseCallback callback);
-        void loop();
+        void loop(bool nostop=false);
 };
 
 Response fetch(const char* url, RequestOptions options);
