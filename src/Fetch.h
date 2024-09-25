@@ -90,6 +90,7 @@ class FetchClient {
         WiFiClient _httpClient;
         WiFiClientSecure _httpsClient;
         OnResponseCallback _OnResponseCallback;
+        bool _sseFirstRespond;
     public:
         FetchClient();
         FetchClient(WiFiClient client, OnResponseCallback callback);

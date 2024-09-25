@@ -260,6 +260,8 @@ _protocol(HTTP), _httpClient(client), _httpsClient(), _OnResponseCallback(onResp
 FetchClient::FetchClient(WiFiClientSecure client, OnResponseCallback onResponseCallback) :
 _protocol(HTTPS), _httpClient(), _httpsClient(client), _OnResponseCallback(onResponseCallback) {}
 
+FetchClient::FetchClient() : _sseFirstRespond(true) {}
+
 void FetchClient::loop(bool nostop) {
     if(_protocol == HTTP && _httpClient.available()) {
         DEBUG_FETCH("[Info] Receiving response.");
@@ -288,14 +290,14 @@ void FetchClient::loop(bool nostop) {
 void FetchClient::loopsse() {
     if(_protocol == HTTP && _httpClient.available()) {
         DEBUG_FETCH("[Info] Receiving SSE response.");
-        Response response = receiveSSEResponse(_httpClient);
-
+        Response response = _sseFirstRespond ? receiveResponse(_httpClient) : receiveSSEResponse(_httpClient);
+        _sseFirstRespond = false;
         _OnResponseCallback(response);
     }
     else if(_protocol == HTTPS && _httpsClient.available()) {
         DEBUG_FETCH("[Info] Receiving SSE response.");
-        Response response = receiveSSEResponse(_httpsClient);
-
+        Response response = _sseFirstRespond ? receiveResponse(_httpsClient) : receiveSSEResponse(_httpsClient);
+        _sseFirstRespond = false;
         _OnResponseCallback(response);
     }
 }
