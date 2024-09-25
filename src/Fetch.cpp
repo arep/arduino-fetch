@@ -252,15 +252,13 @@ FetchClient fetch(const char* url, RequestOptions options, OnResponseCallback on
 }
 
 FetchClient::FetchClient() :
-_protocol(HTTP), _httpClient(), _httpsClient(), _OnResponseCallback(NULL) {}
+_protocol(HTTP), _httpClient(), _httpsClient(), _OnResponseCallback(NULL), _sseFirstRespond(true) {}
 
 FetchClient::FetchClient(WiFiClient client, OnResponseCallback onResponseCallback) :
-_protocol(HTTP), _httpClient(client), _httpsClient(), _OnResponseCallback(onResponseCallback) {}
+_protocol(HTTP), _httpClient(client), _httpsClient(), _OnResponseCallback(onResponseCallback), _sseFirstRespond(true) {}
 
 FetchClient::FetchClient(WiFiClientSecure client, OnResponseCallback onResponseCallback) :
-_protocol(HTTPS), _httpClient(), _httpsClient(client), _OnResponseCallback(onResponseCallback) {}
-
-FetchClient::FetchClient() : _sseFirstRespond(true) {}
+_protocol(HTTPS), _httpClient(), _httpsClient(client), _OnResponseCallback(onResponseCallback), _sseFirstRespond(true) {}
 
 void FetchClient::loop(bool nostop) {
     if(_protocol == HTTP && _httpClient.available()) {
